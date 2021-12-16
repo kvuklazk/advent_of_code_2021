@@ -26,7 +26,6 @@ for i in range(len(file)):
         break
 
 field = []
-print(file)
 
 max_num_x = 0
 max_num_y = 0
@@ -42,25 +41,29 @@ for i in range(max_num_y + 1):
     for k in range(max_num_x + 1):
         field[i].append(".")
 
+
 for i in file:
     if i[0][0] == i[1][0]:
         for k in range(i[1][1] - i[0][1] + 1):
             if field[k + i[0][1]][i[0][0]] == ".":
-                field[k + i[0][1]][i[0][0]] = "1"
+                field[k + i[0][1]][i[0][0]] = 1
             else:
-                field[k + i[0][1]][i[0][0]] = str(int(field[k + i[0][1]][i[0][0]]) + 1)
+                field[k + i[0][1]][i[0][0]] += 1
     else:
         for k in range(i[1][0] - i[0][0] + 1):
             if field[i[0][1]][k + i[0][0]] == ".":
-                field[i[0][1]][k + i[0][0]] = "1"
+                field[i[0][1]][k + i[0][0]] = 1
             else:
-                field[i[0][1]][k + i[0][0]] = str(int(field[i[0][1]][k + i[0][0]]) + 1)
+                field[i[0][1]][k + i[0][0]] += 1
 
 
 field_file = open("field.txt", "a")
 field_file.truncate(0)
+
+for i in range(len(field)):
+    field[i] = list(map(str, field[i]))
 for i in field:
-    field_file.write(''.join(i))
+    field_file.write(",".join(i))
     field_file.write('\n')
 
 field_file.close()

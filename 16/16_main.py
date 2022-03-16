@@ -25,7 +25,6 @@ for char in file_input:
     bin_input += conversion[char]
 
 print(file_input)
-print(bin_input)
 
 
 def type_4(inf_bits: str = ""):
@@ -37,10 +36,9 @@ def type_4(inf_bits: str = ""):
         if inf_bits[0] == "0":
             break
         inf_bits = inf_bits[5:]
-
-    print(message)
+    print("message in binary: ", message)
     message = str(int(message, 2))
-    print(message)
+    print("message: ", message, "\n", "length in packets: ", length)
     return message, length
 
 
@@ -63,33 +61,39 @@ def other_type_1(inf_bits: str = ""):
     print("information string: ", inf_bits)
     print("number of packets", num_of_packets)
     for i in range(num_of_packets):
-        length = packet(inf_bits)[1]
-        message += packet(inf_bits)[0]
+        info = packet(inf_bits)
+        length = int(info[1])
+        message += info[0]
         inf_bits = inf_bits[length*5+6:]
     return message
 
 
 def other_type_0(inf_bits: str = ""):
-    print("kk")
     length_of_packets = inf_bits[:15]
     length_of_packets = int(length_of_packets, 2)
-    message = ""
+    message = []
     length = 0
     inf_bits = inf_bits[15:]
     print("information string: ", inf_bits)
-    print("number of packets", length_of_packets)
+    print("length of packets", length_of_packets)
     while True:
-        length += packet(inf_bits)[1]
-        message += packet(inf_bits)[0]
-        inf_bits = inf_bits[length * 5 + 6:]
+        info = packet(inf_bits)
+        length += int(info[1]) * 5 + 6
+        message.append(info[0])
+        inf_bits = inf_bits[int(info[1]) * 5 + 6:]
+        print("total length: ", length)
         if length == length_of_packets:
             break
     return message
 
 
 def packet(string: str = ""):
+    print(string)
     version = string[:3]
     version = int(version, 2)
+    global version_sum
+    version_sum += version
+    print()
     print("version: ", version)
     string = string[3:]
 
@@ -104,4 +108,6 @@ def packet(string: str = ""):
         return other_type(string)
 
 
+version_sum = 0
 print("\n"*5, "message: ", packet(bin_input))
+print(version_sum)

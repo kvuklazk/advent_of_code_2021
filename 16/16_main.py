@@ -26,20 +26,20 @@ for char in file_input:
 
 print(file_input)
 
-
+"""
 def type_4(inf_bits: str = ""):
-    message = ""
+    # message = ""
     length = 0
     while True:
         length += 1
-        message += inf_bits[1:5]
+        # message += inf_bits[1:5]
         if inf_bits[0] == "0":
             break
         inf_bits = inf_bits[5:]
-    print("message in binary: ", message)
-    message = str(int(message, 2))
-    print("message: ", message, "\n", "length in packets: ", length)
-    return message, length
+    # print("message in binary: ", message)
+    # message = str(int(message, 2))
+    # print("message: ", message, "\n", "length in packets: ", length)
+    return length  # , message
 
 
 def other_type(inf_bits: str = ""):
@@ -56,35 +56,34 @@ def other_type(inf_bits: str = ""):
 def other_type_1(inf_bits: str = ""):
     num_of_packets = inf_bits[:11]
     num_of_packets = int(num_of_packets, 2)
-    message = ""
+    # message = ""
+    length = 0
     inf_bits = inf_bits[11:]
     print("information string: ", inf_bits)
     print("number of packets", num_of_packets)
     for i in range(num_of_packets):
-        info = packet(inf_bits)
-        length = int(info[1])
-        message += info[0]
+        length = packet(inf_bits)
+        # message += info[0]
         inf_bits = inf_bits[length*5+6:]
-    return message
+    return length  # , message
 
 
 def other_type_0(inf_bits: str = ""):
     length_of_packets = inf_bits[:15]
     length_of_packets = int(length_of_packets, 2)
-    message = []
+    # message = []
     length = 0
     inf_bits = inf_bits[15:]
     print("information string: ", inf_bits)
     print("length of packets", length_of_packets)
     while True:
-        info = packet(inf_bits)
-        length += int(info[1]) * 5 + 6
-        message.append(info[0])
-        inf_bits = inf_bits[int(info[1]) * 5 + 6:]
+        length += packet(inf_bits) * 5 + 6
+        # message.append(info[0])
+        inf_bits = inf_bits[packet(inf_bits) * 5 + 6:]
         print("total length: ", length)
         if length == length_of_packets:
             break
-    return message
+    return length  # , message
 
 
 def packet(string: str = ""):
@@ -106,8 +105,47 @@ def packet(string: str = ""):
         return type_4(string)
     else:
         return other_type(string)
+"""
 
 
-version_sum = 0
-print("\n"*5, "message: ", packet(bin_input))
-print(version_sum)
+def packet(string: str = "", version_sum: int = 0):
+    print(string)
+    version_sum += int(string[:3], 2)
+    string = string[3:]
+
+    id_type = int(string[:3], 2)
+    string = string[3:]
+
+    if id_type == 4:
+        while True:
+            if int(string[0]) == 0:
+                string = string[5:]
+                break
+            string = string[5:]
+
+    #  length type 1
+    elif int(string[0]) == 1:
+
+        string = string[1:]
+        num_of_pac = int(string[:11], 2)
+        string = string[11:]
+        for i in range(num_of_pac):
+            info = packet(string, version_sum)
+            string = info[0]
+            version_sum = info[1]
+
+    # length type 0
+    else:
+        string = string[1:]
+        packets_len = int(string[:15], 2)
+        string = string[15:]
+        length = len(string)
+        while len(string) > length-packets_len:
+            info = packet(string, version_sum)
+            string = info[0]
+            version_sum = info[1]
+
+    return string, version_sum
+
+
+print("\n"*5, "version_sum: ", packet(bin_input)[1])
